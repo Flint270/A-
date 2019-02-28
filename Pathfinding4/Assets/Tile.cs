@@ -5,13 +5,14 @@ using TMPro;
 
 public class Tile : MonoBehaviour
 {
-    public enum tileType { Empty, Open, Locked, Wall, Target};
+    public enum tileType { Empty, Open, Locked, Wall, Target, Path};
 
     Sprite empty;
     Sprite open;
     Sprite locked;
     Sprite wall;
     Sprite target;
+    Sprite path;
 
     public tileType type;
     public SpriteRenderer sprRen;
@@ -50,6 +51,7 @@ public class Tile : MonoBehaviour
         locked = Resources.Load<Sprite>("Sprites/lockedTile");
         wall = Resources.Load<Sprite>("Sprites/wall");
         target = Resources.Load<Sprite>("Sprites/target");
+        path = Resources.Load<Sprite>("Sprites/pathTile");
 
         tileTypeSwitch = 1;
     }
@@ -91,6 +93,10 @@ public class Tile : MonoBehaviour
             case 5:
                 type = tileType.Target;
                 sprRen.sprite = target;
+                break;
+            case 6:
+                type = tileType.Path;
+                sprRen.sprite = path;
                 break;
         }
     }

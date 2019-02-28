@@ -21,6 +21,8 @@ public class Grid : MonoBehaviour
 
     GameObject Tiles;
 
+    Pathfinding pathfinder;
+
     float nodeDiameter;
     int gridSizeX, gridSizeY;
 
@@ -32,9 +34,16 @@ public class Grid : MonoBehaviour
         Tiles = new GameObject();
         Tiles.name = "Tiles";
         oldNeighbors = new List<Node>();
-
+        pathfinder = GetComponent<Pathfinding>();
         CreateGrid();
+
+        Node startNode = NodeFromWorldPoint(player.position);
+        Node targetNode = NodeFromWorldPoint(target.position);
+
+        //pathfinder.closedSet.Add(startNode);
+
         
+        //pathfinder.SetNeighbor(startNode, targetNode);
     }
 
     private void Update()
@@ -45,7 +54,8 @@ public class Grid : MonoBehaviour
             GameObject targetPos = TileFromWorldPoint(target.position);
 
 
-            Node node = NodeFromWorldPoint(player.position);
+            Node startNode = NodeFromWorldPoint(player.position);
+            Node targetNode = NodeFromWorldPoint(target.position);
 
             foreach (GameObject tile in tiles)
             {
@@ -55,8 +65,8 @@ public class Grid : MonoBehaviour
                 if (tile == playerPos && playerStart == true)
                 {
                     tileThis.tileTypeSwitch = 3;
+                    startNode.hCost = pathfinder.GetDistance(startNode, targetNode);
                     playerStart = false;
-                    GetNeighbor(node);
                 }
                 else if (tile == targetPos && targetStart == true)
                 {
@@ -71,6 +81,20 @@ public class Grid : MonoBehaviour
                 else
                 {
                     thisNode.walkable = true;
+                }
+            }
+
+            foreach(Node n in grid)
+            {
+
+            }
+            
+            if(pathfinder.closedSet != null)
+            {
+                foreach (Node n in pathfinder.closedSet)
+                {
+                    //GetNeighbor(n);
+                    //pathfinder.SetNeighbor(n, targetNode);
                 }
             }
         }
@@ -142,7 +166,7 @@ public class Grid : MonoBehaviour
     public List<Node> GetNeighbor(Node node)
     {
         List<Node> neighbors = new List<Node>();
-        //Debug.Log("test1");
+
         for (int x = -1; x <= 1; x++)
         {
             for (int y = -1; y <= 1; y++)
@@ -151,12 +175,8 @@ public class Grid : MonoBehaviour
                 {
                     continue;
                 }
-
                 int checkX = node.gridX + x;
                 int checkY = node.gridY + y;
-
-                Debug.Log("Node X:" + node.gridX + ", x: " + x + ", checkX: " + checkX);
-
 
                 GameObject tile = TileFromWorldPoint(new Vector3(checkX , checkY));
                 Tile thisTile = tile.GetComponent<Tile>();
@@ -166,14 +186,40 @@ public class Grid : MonoBehaviour
                     if (!neighbors.Contains(grid[checkX, checkY]) && thisTile.tileTypeSwitch != 3 && thisTile.tileTypeSwitch != 4)
                     {
                         neighbors.Add(grid[checkX, checkY]);
-
                         thisTile.tileTypeSwitch = 2;
+
+                        if (pathfinder.openSet != null && !pathfinder.openSet.Contains(grid[checkX, checkY]))
+                        {
+                            pathfinder.openSet.Add(grid[checkX, checkY]);
+                        }
                     }
                 }
             }
         }
         //Debug.Log("end loop");
         return neighbors;
+    }
+
+    public void Clear()
+    {
+        pathfinder.openSet.Clear();
+        pathfinder.closedSet.Clear();
+
+        foreach(GameObject tile in tiles)
+        {
+            Tile tileThis = tile.GetComponent<Tile>();
+            Node thisNode = NodeFromWorldPoint(tile.transform.position);
+
+            if(tileThis.tileTypeSwitch == 3 || tileThis.tileTypeSwitch == 2 || tileThis.tileTypeSwitch == 6)
+            {
+                tileThis.tileTypeSwitch = 1;
+                thisNode.gCost = 0;
+                thisNode.hCost = 0;
+            }
+
+            playerStart = true;
+            targetStart = true;
+        }
     }
 
     public Node NodeFromWorldPoint(Vector3 worldPosition)
@@ -204,6 +250,7 @@ public class Grid : MonoBehaviour
         return tiles[x, y];
     }
 
+    public List<Node> path;
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireCube(transform.position, gridWorldSize);
@@ -215,6 +262,13 @@ public class Grid : MonoBehaviour
             foreach(Node n in grid)
             {
                 Gizmos.color = (n.walkable) ? Color.white : Color.red;
+                if(path!=null)
+                {
+                    if (path.Contains(n))
+                    {
+                        Gizmos.color = Color.green;
+                    }
+                }
                 if(playerNode == n)
                 {
                     Gizmos.color = Color.cyan;
