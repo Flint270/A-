@@ -24,6 +24,7 @@ public class MouseController : MonoBehaviour
             if (hit.collider != null)
             {
                 Tile tileHit = hit.transform.gameObject.GetComponent<Tile>();
+                Node node = grid.NodeFromWorldPoint(hit.transform.position);
 
                 if (tileHit.tileTypeSwitch == 1)
                 {
@@ -33,9 +34,23 @@ public class MouseController : MonoBehaviour
                 {
                     tileHit.tileTypeSwitch = 1;
                 }
-                else if (tileHit.tileTypeSwitch == 2)
+            }
+        }
+        else if(Input.GetMouseButtonDown(0))
+        {
+            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
+
+            RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
+            if (hit.collider != null)
+            {
+                Tile tileHit = hit.transform.gameObject.GetComponent<Tile>();
+                Node node = grid.NodeFromWorldPoint(hit.transform.position);
+
+                if (tileHit.tileTypeSwitch == 2)
                 {
                     tileHit.tileTypeSwitch = 3;
+                    grid.GetNeighbor(node);
                 }
             }
         }

@@ -9,8 +9,8 @@ public class Node
     public int gridX;
     public int gridY;
 
-    public int gCost;
-    public int hCost;
+    public int gCost = 10;
+    public int hCost = 5;
 
     public Node(bool _walkable, Vector3 _worldPos, int _gridX, int _gridY)
     {

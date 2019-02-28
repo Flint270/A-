@@ -17,6 +17,16 @@ public class Tile : MonoBehaviour
     public BoxCollider2D boxCol;
     public int tileTypeSwitch;
 
+    public Grid grid;
+    Node node;
+
+    [SerializeField]
+    int gCost;
+    [SerializeField]
+    int hCost;
+    [SerializeField]
+    int fCost;
+
     public Tile thisTile;
 
     public GameObject tile;
@@ -42,6 +52,11 @@ public class Tile : MonoBehaviour
     private void Update()
     {
         TileSwitch(tileTypeSwitch);
+        node = grid.NodeFromWorldPoint(tile.transform.position);
+
+        gCost = node.gCost;
+        hCost = node.hCost;
+        fCost = node.fCost;
     }
 
     public void TileSwitch(int trigger)
@@ -70,21 +85,4 @@ public class Tile : MonoBehaviour
                 break;
         }
     }
-
-    /*private void Awake()
-    {
-        
-
-    }
-
-    private void Update()
-    {
-        //SetSprite(tileType.Empty(ToString));
-
-        
-    }*/
-
-    
-
-    
 }

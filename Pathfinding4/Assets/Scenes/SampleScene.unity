@@ -506,6 +506,8 @@ MonoBehaviour:
     m_Bits: 256
   gridWorldSize: {x: 18, y: 10}
   nodeRadius: 0.5
+  playerStart: 1
+  targetStart: 1
 --- !u!4 &1455690653
 Transform:
   m_ObjectHideFlags: 0
