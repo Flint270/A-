@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class Tile : MonoBehaviour
 {
@@ -27,6 +28,10 @@ public class Tile : MonoBehaviour
     [SerializeField]
     int fCost;
 
+    public TextMeshPro gText;
+    public TextMeshPro hText;
+    public TextMeshPro fText;
+
     public Tile thisTile;
 
     public GameObject tile;
@@ -45,8 +50,8 @@ public class Tile : MonoBehaviour
         locked = Resources.Load<Sprite>("Sprites/lockedTile");
         wall = Resources.Load<Sprite>("Sprites/wall");
         target = Resources.Load<Sprite>("Sprites/target");
+
         tileTypeSwitch = 1;
-        TileSwitch(tileTypeSwitch);
     }
 
     private void Update()
@@ -57,6 +62,10 @@ public class Tile : MonoBehaviour
         gCost = node.gCost;
         hCost = node.hCost;
         fCost = node.fCost;
+
+        gText.text = "" + gCost;
+        hText.text = "" + hCost;
+        fText.text = "" + fCost;
     }
 
     public void TileSwitch(int trigger)

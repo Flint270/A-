@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class Grid : MonoBehaviour
 {
@@ -92,13 +93,48 @@ public class Grid : MonoBehaviour
                 grid[x, y] = new Node(walkable, worldPoint, x, y);
 
                 tiles[x, y] = new GameObject();
-                tiles[x, y].AddComponent<Tile>();
+                Tile tile = tiles[x, y].AddComponent<Tile>();
 
                 tiles[x, y].GetComponent<Tile>().grid = this;
 
-                tiles[x, y].transform.parent = Tiles.transform;
+                tiles[x, y].transform.SetParent(Tiles.transform);
                 tiles[x, y].name = "Tile: " + x + ", " + y;
                 tiles[x, y].transform.position = worldPoint;
+
+                GameObject gText = new GameObject();
+                gText.transform.SetParent(tiles[x, y].transform);
+                GameObject hText = new GameObject();
+                hText.transform.SetParent(tiles[x, y].transform);
+                GameObject fText = new GameObject();
+                fText.transform.SetParent(tiles[x, y].transform);
+
+                TextMeshPro textG = gText.AddComponent<TextMeshPro>();
+                TextMeshPro textH = hText.AddComponent<TextMeshPro>();
+                TextMeshPro textF = fText.AddComponent<TextMeshPro>();
+
+                gText.name = "Gtext";
+                tile.gText = textG;
+                textG.alignment = TextAlignmentOptions.Center;
+                gText.GetComponent<RectTransform>().sizeDelta = new Vector2(0.9f, 0.6f);
+                gText.transform.localPosition = new Vector3(-0.20f, 0.25f);
+                textG.fontSize = 3;
+                textG.color = Color.black;
+
+                hText.name = "Htext";
+                tile.hText = textH;
+                textH.alignment = TextAlignmentOptions.Center;
+                hText.GetComponent<RectTransform>().sizeDelta = new Vector2(0.9f, 0.6f);
+                hText.transform.localPosition = new Vector3(0.25f, 0.25f);
+                textH.fontSize = 3;
+                textH.color = Color.black;
+
+                fText.name = "Ftext";
+                tile.fText = textF;
+                textF.alignment = TextAlignmentOptions.Center;
+                fText.GetComponent<RectTransform>().sizeDelta = new Vector2(0.9f, 0.6f);
+                fText.transform.localPosition = new Vector3(0.04f, -0.2f);
+                textF.fontSize = 3;
+                textF.color = Color.black;
             }
         }
     }
