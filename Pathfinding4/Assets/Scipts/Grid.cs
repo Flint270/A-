@@ -17,14 +17,16 @@ public class Grid : MonoBehaviour
     public bool targetStart = true;
 
     //public GameObject prefab;
-    GameObject[,] tiles;
+    public GameObject[,] tiles;
 
     GameObject Tiles;
 
     Pathfinding pathfinder;
 
+    public List<Node> path;
+
     float nodeDiameter;
-    int gridSizeX, gridSizeY;
+    public int gridSizeX, gridSizeY;
 
     private void Start()
     {
@@ -35,15 +37,12 @@ public class Grid : MonoBehaviour
         Tiles.name = "Tiles";
         oldNeighbors = new List<Node>();
         pathfinder = GetComponent<Pathfinding>();
+        path = new List<Node>();
+
         CreateGrid();
-
-        Node startNode = NodeFromWorldPoint(player.position);
-        Node targetNode = NodeFromWorldPoint(target.position);
-
-        //pathfinder.closedSet.Add(startNode);
+        Clear();
 
         
-        //pathfinder.SetNeighbor(startNode, targetNode);
     }
 
     private void Update()
@@ -52,7 +51,6 @@ public class Grid : MonoBehaviour
         {
             GameObject playerPos = TileFromWorldPoint(player.position);
             GameObject targetPos = TileFromWorldPoint(target.position);
-
 
             Node startNode = NodeFromWorldPoint(player.position);
             Node targetNode = NodeFromWorldPoint(target.position);
@@ -65,7 +63,6 @@ public class Grid : MonoBehaviour
                 if (tile == playerPos && playerStart == true)
                 {
                     tileThis.tileTypeSwitch = 3;
-                    startNode.hCost = pathfinder.GetDistance(startNode, targetNode);
                     playerStart = false;
                 }
                 else if (tile == targetPos && targetStart == true)
@@ -83,18 +80,13 @@ public class Grid : MonoBehaviour
                     thisNode.walkable = true;
                 }
             }
-
-            foreach(Node n in grid)
-            {
-
-            }
             
             if(pathfinder.closedSet != null)
             {
                 foreach (Node n in pathfinder.closedSet)
                 {
-                    //GetNeighbor(n);
-                    //pathfinder.SetNeighbor(n, targetNode);
+                    GetNeighbor(n);
+                    pathfinder.SetNeighbor(n, targetNode);
                 }
             }
         }
@@ -141,7 +133,7 @@ public class Grid : MonoBehaviour
                 textG.alignment = TextAlignmentOptions.Center;
                 gText.GetComponent<RectTransform>().sizeDelta = new Vector2(0.9f, 0.6f);
                 gText.transform.localPosition = new Vector3(-0.20f, 0.25f);
-                textG.fontSize = 3;
+                textG.fontSize = 2;
                 textG.color = Color.black;
 
                 hText.name = "Htext";
@@ -149,7 +141,7 @@ public class Grid : MonoBehaviour
                 textH.alignment = TextAlignmentOptions.Center;
                 hText.GetComponent<RectTransform>().sizeDelta = new Vector2(0.9f, 0.6f);
                 hText.transform.localPosition = new Vector3(0.25f, 0.25f);
-                textH.fontSize = 3;
+                textH.fontSize = 2;
                 textH.color = Color.black;
 
                 fText.name = "Ftext";
@@ -183,7 +175,7 @@ public class Grid : MonoBehaviour
 
                 if (checkX >= 0 && checkX < gridSizeX && checkY >= 0 && checkY < gridSizeY)
                 {
-                    if (!neighbors.Contains(grid[checkX, checkY]) && thisTile.tileTypeSwitch != 3 && thisTile.tileTypeSwitch != 4)
+                    if (!neighbors.Contains(grid[checkX, checkY]) && thisTile.tileTypeSwitch != 3 && thisTile.tileTypeSwitch != 4  && thisTile.tileTypeSwitch != 6)
                     {
                         neighbors.Add(grid[checkX, checkY]);
                         thisTile.tileTypeSwitch = 2;
@@ -196,25 +188,36 @@ public class Grid : MonoBehaviour
                 }
             }
         }
-        //Debug.Log("end loop");
         return neighbors;
     }
 
     public void Clear()
     {
+        pathfinder.StopAllCoroutines();
+
+        Node startNode = NodeFromWorldPoint(player.position);
+        Node targetNode = NodeFromWorldPoint(target.position);
+
         pathfinder.openSet.Clear();
         pathfinder.closedSet.Clear();
+        path.Clear();
 
-        foreach(GameObject tile in tiles)
+        pathfinder.closedSet.Add(startNode);
+        pathfinder.SetNeighbor(startNode, targetNode);
+        startNode.hCost = pathfinder.GetDistance(startNode, targetNode);
+
+        foreach (GameObject tile in tiles)
         {
             Tile tileThis = tile.GetComponent<Tile>();
             Node thisNode = NodeFromWorldPoint(tile.transform.position);
 
-            if(tileThis.tileTypeSwitch == 3 || tileThis.tileTypeSwitch == 2 || tileThis.tileTypeSwitch == 6)
+
+            thisNode.gCost = 0;
+            thisNode.hCost = 0;
+
+            if (tileThis.tileTypeSwitch == 3 || tileThis.tileTypeSwitch == 2 || tileThis.tileTypeSwitch == 6 && !pathfinder.openSet.Contains(thisNode) && !pathfinder.closedSet.Contains(thisNode))
             {
                 tileThis.tileTypeSwitch = 1;
-                thisNode.gCost = 0;
-                thisNode.hCost = 0;
             }
 
             playerStart = true;
@@ -250,7 +253,6 @@ public class Grid : MonoBehaviour
         return tiles[x, y];
     }
 
-    public List<Node> path;
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireCube(transform.position, gridWorldSize);

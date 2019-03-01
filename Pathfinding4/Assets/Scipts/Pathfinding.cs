@@ -11,6 +11,9 @@ public class Pathfinding : MonoBehaviour
 
     public Transform seeker, target;
 
+    [SerializeField]
+    private float timer;
+
     private void Awake()
     {
         grid = GetComponent<Grid>();
@@ -23,6 +26,11 @@ public class Pathfinding : MonoBehaviour
     private void Update()
     {
         //FindPath(seeker.position, target.position);
+    }
+
+    public void PathFind(Vector3 startPos, Vector3 targetPos)
+    {
+        StartCoroutine(FindPath(startPos, targetPos));
     }
 
     void FindPath2(Vector3 startPos, Vector3 targetPos)
@@ -87,19 +95,79 @@ public class Pathfinding : MonoBehaviour
 
             if (newMovementCostToNeighbor < neighbor.gCost || neighbor.gCost == 0 || !openSet.Contains(neighbor))
             {
-                neighbor.gCost = newMovementCostToNeighbor;
-                neighbor.hCost = GetDistance(neighbor, targetNode);
-                neighbor.parent = currentNode;
-
-                if (!openSet.Contains(neighbor))
+                if (!grid.path.Contains(neighbor))
                 {
-                    //openSet.Add(neighbor);
+                    neighbor.gCost = newMovementCostToNeighbor;
+                    neighbor.hCost = GetDistance(neighbor, targetNode);
+                    neighbor.parent = currentNode;
+
+                    if (!openSet.Contains(neighbor))
+                    {
+                        openSet.Add(neighbor);
+                    }
                 }
             }
         }
     }
 
-    public void FindPath(Vector3 startPos, Vector3 targetPos)
+    public IEnumerator FindPath(Vector3 startPos, Vector3 targetPos)
+    {
+        Node startNode = grid.NodeFromWorldPoint(startPos);
+        Node targetNode = grid.NodeFromWorldPoint(targetPos);
+
+        List<Node> openSet = new List<Node>();
+        HashSet<Node> closedSet = new HashSet<Node>();
+
+        openSet.Add(startNode);
+
+        while (openSet.Count > 0)
+        {
+            Node currentNode = openSet[0];
+            for (int i = 1; i < openSet.Count; i++)
+            {
+                if (openSet[i].fCost < currentNode.fCost || openSet[i].fCost == currentNode.fCost && openSet[i].hCost < currentNode.hCost)
+                {
+                    currentNode = openSet[i];
+                }
+            }
+
+            openSet.Remove(currentNode);
+            closedSet.Add(currentNode);
+            GameObject tileGo = grid.TileFromWorldPoint(currentNode.worldPosition);
+            Tile tile = tileGo.GetComponent<Tile>();
+            tile.tileTypeSwitch = 3;
+
+            if (currentNode == targetNode)
+            {
+                RetracePath(startNode, targetNode);
+                StopAllCoroutines();
+            }
+
+            foreach (Node neighbor in grid.GetNeighbor(currentNode))
+            {
+                if (!neighbor.walkable || closedSet.Contains(neighbor))
+                {
+                    continue;
+                }
+
+                int newMovementCostToNeighbor = currentNode.gCost + GetDistance(currentNode, neighbor);
+                if(newMovementCostToNeighbor < neighbor.gCost || !openSet.Contains(neighbor))
+                {
+                    neighbor.gCost = newMovementCostToNeighbor;
+                    neighbor.hCost = GetDistance(neighbor, targetNode);
+                    neighbor.parent = currentNode;
+
+                    if(!openSet.Contains(neighbor))
+                    {
+                        openSet.Add(neighbor);
+                    }
+                }
+            }
+            yield return new WaitForSeconds(timer);
+        }
+    }
+
+    /*public void FindPath(Vector3 startPos, Vector3 targetPos)
     {
         Node startNode = grid.NodeFromWorldPoint(startPos);
         Node targetNode = grid.NodeFromWorldPoint(targetPos);
@@ -150,10 +218,11 @@ public class Pathfinding : MonoBehaviour
                     {
                         openSet.Add(neighbor);
                     }
+                    StartCoroutine("TimerRoutine");
                 }
             }
         }
-    }
+    }*/
 
     void RetracePath(Node startNode, Node endNode)
     {
@@ -185,5 +254,14 @@ public class Pathfinding : MonoBehaviour
             return 14 * dstY + 10 * (dstX - dstY);
         }
         return 14 * dstX + 10 * (dstY - dstX);
+    }
+
+    IEnumerator TimerRoutine()
+    {
+        while(timer < 5)
+        {
+            yield return new WaitForSeconds(Time.deltaTime);
+            timer += Time.deltaTime;
+        }
     }
 }
