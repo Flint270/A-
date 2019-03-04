@@ -42,7 +42,7 @@ public class Grid : MonoBehaviour
         CreateGrid();
         Clear();
 
-        
+        Debug.Log(Time.frameCount);
     }
 
     private void Update()
@@ -117,7 +117,7 @@ public class Grid : MonoBehaviour
                 tiles[x, y].name = "Tile: " + x + ", " + y;
                 tiles[x, y].transform.position = worldPoint;
 
-                GameObject gText = new GameObject();
+                /*GameObject gText = new GameObject();
                 gText.transform.SetParent(tiles[x, y].transform);
                 GameObject hText = new GameObject();
                 hText.transform.SetParent(tiles[x, y].transform);
@@ -150,7 +150,7 @@ public class Grid : MonoBehaviour
                 fText.GetComponent<RectTransform>().sizeDelta = new Vector2(0.9f, 0.6f);
                 fText.transform.localPosition = new Vector3(0.04f, -0.2f);
                 textF.fontSize = 3;
-                textF.color = Color.black;
+                textF.color = Color.black;*/
             }
         }
     }

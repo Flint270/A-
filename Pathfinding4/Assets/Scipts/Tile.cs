@@ -65,9 +65,12 @@ public class Tile : MonoBehaviour
         hCost = node.hCost;
         fCost = node.fCost;
 
-        gText.text = "" + gCost;
-        hText.text = "" + hCost;
-        fText.text = "" + fCost;
+        if(gText != null)
+            gText.text = "" + gCost;
+        if (hText != null)
+            hText.text = "" + hCost;
+        if (fText != null)
+            fText.text = "" + fCost;
     }
 
     public void TileSwitch(int trigger)
