@@ -8,11 +8,13 @@ public class Grid : MonoBehaviour
     public Transform player;
     public Transform target;
     public LayerMask unwalkableMask;
-    public Vector2 gridWorldSize;
+    Vector2 gridWorldSize;
     public float nodeRadius;
     Node[,] grid;
     List<Node> oldNeighbors;
 
+    CameraController camCon;
+    
     public bool playerStart = true;
     public bool targetStart = true;
 
@@ -28,11 +30,28 @@ public class Grid : MonoBehaviour
     float nodeDiameter;
     public int gridSizeX, gridSizeY;
 
-    private void Start()
+    //[Range(17, 30)]
+    public int mapSizeX;
+    //[Range(9,30)]
+    public int mapSizeY;
+
+    private void Awake()
     {
+
+        Camera cam = Camera.main;
+        camCon = cam.GetComponent<CameraController>();
+
+        gridWorldSize.x = mapSizeX;
+        gridWorldSize.y = mapSizeY;
+
+        this.transform.position = new Vector3((gridWorldSize.x / 2) - .5f, (gridWorldSize.y / 2) - .5f);
+
         nodeDiameter = nodeRadius * 2;
         gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
         gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
+
+        camCon.panLimit = new Vector2(gridSizeX - 9.5f, gridSizeY - 5.5f);
+
         Tiles = new GameObject();
         Tiles.name = "Tiles";
         oldNeighbors = new List<Node>();
@@ -42,7 +61,6 @@ public class Grid : MonoBehaviour
         CreateGrid();
         Clear();
 
-        Debug.Log(Time.frameCount);
     }
 
     private void Update()
@@ -198,12 +216,25 @@ public class Grid : MonoBehaviour
         Node startNode = NodeFromWorldPoint(player.position);
         Node targetNode = NodeFromWorldPoint(target.position);
 
-        pathfinder.openSet.Clear();
-        pathfinder.closedSet.Clear();
+        if (pathfinder.openSet != null)
+        {
+            pathfinder.openSet.Clear();
+        }
+        if (pathfinder.closedSet != null)
+        {
+            pathfinder.closedSet.Clear();
+        }
         path.Clear();
 
-        pathfinder.closedSet.Add(startNode);
-        pathfinder.SetNeighbor(startNode, targetNode);
+        if (pathfinder.openSet != null)
+        {
+            pathfinder.closedSet.Add(startNode);
+        }
+
+        if (pathfinder.closedSet != null)
+        {
+            pathfinder.SetNeighbor(startNode, targetNode);
+        }
         startNode.hCost = pathfinder.GetDistance(startNode, targetNode);
 
         foreach (GameObject tile in tiles)
@@ -227,8 +258,10 @@ public class Grid : MonoBehaviour
 
     public Node NodeFromWorldPoint(Vector3 worldPosition)
     {
-        float percentX = (worldPosition.x - transform.position.x) / gridWorldSize.x + 0.5f - (nodeRadius / gridWorldSize.x + 0.001f);
-        float percentY = (worldPosition.y - transform.position.y) / gridWorldSize.y + 0.5f - (nodeRadius / gridWorldSize.y);
+
+
+        float percentX = (worldPosition.x - transform.position.x) / gridWorldSize.x + 0.5f - (nodeRadius / gridWorldSize.x + 0.0000001f);
+        float percentY = (worldPosition.y - transform.position.y) / gridWorldSize.y + 0.5f - (nodeRadius / gridWorldSize.y + 0.0000001f);
 
         //float percentX = (worldPosition.x + gridWorldSize.x / 2) / gridWorldSize.x;
         //float percentY = (worldPosition.y + gridWorldSize.y / 2) / gridWorldSize.y;
@@ -243,8 +276,8 @@ public class Grid : MonoBehaviour
 
     public GameObject TileFromWorldPoint(Vector3 worldPosition)
     {
-        float percentX = (worldPosition.x - transform.position.x) / gridWorldSize.x + 0.5f - (nodeRadius / gridWorldSize.x + 0.001f);
-        float percentY = (worldPosition.y - transform.position.y) / gridWorldSize.y + 0.5f - (nodeRadius / gridWorldSize.y);
+        float percentX = (worldPosition.x - transform.position.x) / gridWorldSize.x + 0.5f - (nodeRadius / gridWorldSize.x + 0.0000001f);
+        float percentY = (worldPosition.y - transform.position.y) / gridWorldSize.y + 0.5f - (nodeRadius / gridWorldSize.y + 0.0000001f);
         percentX = Mathf.Clamp01(percentX);
         percentY = Mathf.Clamp01(percentY);
 

@@ -11,10 +11,12 @@ public class GameController : MonoBehaviour
     [Range(2,100)]
     public int randMax = 75;
 
+    public bool Enum;
+
     public GameObject player;
 
-    public float dragSpeed = 2;
-    private Vector3 dragOrigin;
+    //public float dragSpeed = 2;
+    //private Vector3 dragOrigin;
 
     // Start is called before the first frame update
     void Start()
@@ -74,7 +76,14 @@ public class GameController : MonoBehaviour
         {
             pathfinder.StopAllCoroutines();
             grid.Clear();
-            pathfinder.PathFind(pathfinder.seeker.position, pathfinder.target.position);
+            if(Enum == true)
+            {
+                pathfinder.PathFind(pathfinder.seeker.position, pathfinder.target.position);
+            }
+            else
+            {
+                pathfinder.FindPath(pathfinder.seeker.position, pathfinder.target.position);
+            }
         }
         else if (Input.GetKeyDown(KeyCode.C))
         {

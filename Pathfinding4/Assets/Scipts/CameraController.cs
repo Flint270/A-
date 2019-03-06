@@ -1,26 +1,52 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    Camera cam;
 
-    public float dragSpeed = 2;
-    private Vector3 dragOrigin;
+    public float panSpeed;
+    public float panBorderThickness;
+    public Vector2 panLimit;
 
-    void Update()
+    public float scrollSpeed = 2;
+
+    private void Awake()
     {
-        if (Input.GetMouseButtonDown(2))
+        cam = Camera.main;
+        panSpeed = 20f;
+        panBorderThickness = 10f;
+    }
+
+    private void Update()
+    {
+        Vector3 pos = transform.position;
+
+        if(Input.GetKey(KeyCode.UpArrow) || Input.mousePosition.y >= Screen.height - panBorderThickness)
         {
-            dragOrigin = Input.mousePosition;
-            return;
+            pos.y += panSpeed * Time.deltaTime;
+        }
+        if (Input.GetKey(KeyCode.DownArrow) || Input.mousePosition.y <= panBorderThickness)
+        {
+            pos.y -= panSpeed * Time.deltaTime;
+        }
+        if (Input.GetKey(KeyCode.RightArrow) || Input.mousePosition.x >= Screen.width - panBorderThickness)
+        {
+            pos.x += panSpeed * Time.deltaTime;
+        }
+        if (Input.GetKey(KeyCode.LeftArrow) || Input.mousePosition.x <= panBorderThickness)
+        {
+            pos.x -= panSpeed * Time.deltaTime;
         }
 
-        if (!Input.GetMouseButton(2)) return;
+        float scroll = Input.GetAxis("Mouse ScrollWheel");
 
-        Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - dragOrigin);
-        Vector3 move = new Vector3(pos.x * -dragSpeed, pos.y * -dragSpeed);
+        cam.orthographicSize -= scroll * scrollSpeed * 100f * Time.deltaTime;
 
-        transform.Translate(move, Space.World);
+        cam.orthographicSize = Mathf.Clamp(cam.orthographicSize, 5, 20);
+
+        pos.x = Mathf.Clamp(pos.x, 8.5f, panLimit.x);
+        pos.y = Mathf.Clamp(pos.y, 4.5f, panLimit.y);
+
+        transform.position = pos;
     }
 }

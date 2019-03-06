@@ -30,7 +30,7 @@ public class Pathfinding : MonoBehaviour
 
     public void PathFind(Vector3 startPos, Vector3 targetPos)
     {
-        StartCoroutine(FindPath(startPos, targetPos));
+        StartCoroutine(FindPathSlow(startPos, targetPos));
     }
 
     void FindPath2(Vector3 startPos, Vector3 targetPos)
@@ -110,7 +110,7 @@ public class Pathfinding : MonoBehaviour
         }
     }
 
-    public IEnumerator FindPath(Vector3 startPos, Vector3 targetPos)
+    public IEnumerator FindPathSlow(Vector3 startPos, Vector3 targetPos)
     {
         Node startNode = grid.NodeFromWorldPoint(startPos);
         Node targetNode = grid.NodeFromWorldPoint(targetPos);
@@ -167,7 +167,7 @@ public class Pathfinding : MonoBehaviour
         }
     }
 
-    /*public void FindPath(Vector3 startPos, Vector3 targetPos)
+    public void FindPath(Vector3 startPos, Vector3 targetPos)
     {
         Node startNode = grid.NodeFromWorldPoint(startPos);
         Node targetNode = grid.NodeFromWorldPoint(targetPos);
@@ -218,11 +218,10 @@ public class Pathfinding : MonoBehaviour
                     {
                         openSet.Add(neighbor);
                     }
-                    StartCoroutine("TimerRoutine");
                 }
             }
         }
-    }*/
+    }
 
     void RetracePath(Node startNode, Node endNode)
     {
