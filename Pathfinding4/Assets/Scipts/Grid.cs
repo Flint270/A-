@@ -8,6 +8,8 @@ public class Grid : MonoBehaviour
     public Transform player;
     public Transform target;
     public LayerMask unwalkableMask;
+    public LayerMask existingTiles;
+
     Vector2 gridWorldSize;
     public float nodeRadius;
     Node[,] grid;
@@ -120,22 +122,38 @@ public class Grid : MonoBehaviour
         {
             for (int y = 0; y < gridSizeY; y++)
             {
+
+
                 Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeRadius) + Vector3.up * (y * nodeDiameter + nodeRadius);
 
                 bool walkable = !(Physics2D.OverlapCircle(worldPoint, nodeRadius, unwalkableMask));
 
-                
+                grid[x, y] = new Node(walkable, worldPoint, x, y);
+
+                bool existsTile = Physics2D.OverlapCircle(worldPoint, nodeRadius-.1f, existingTiles);
+
+                if (existsTile == true)
+                {
+                    tiles[x, y] = Physics2D.OverlapCircle(worldPoint, nodeRadius, existingTiles).gameObject;
+                }
+                else if (existsTile == false)
+                {
                     tiles[x, y] = new GameObject();
                     Tile tile = tiles[x, y].AddComponent<Tile>();
-                    
+
                     tiles[x, y].GetComponent<Tile>().grid = this;
-                    
+
                     tiles[x, y].transform.position = worldPoint;
-                    tiles[x, y].transform.SetParent(Tiles.transform);
-                
+
+                    tile.boxCol = tiles[x, y].AddComponent<BoxCollider2D>();
+                    tile.sprRen = tiles[x, y].AddComponent<SpriteRenderer>();
+
+                    tile.tileTypeSwitch = 1;
+                }
+
+                tiles[x, y].transform.SetParent(Tiles.transform);
                 tiles[x, y].name = "Tile: " + x + ", " + y;
 
-                grid[x, y] = new Node(walkable, worldPoint, x, y);
 
                 #region tileText
                 /*GameObject gText = new GameObject();

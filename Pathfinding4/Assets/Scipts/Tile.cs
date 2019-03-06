@@ -48,17 +48,12 @@ public class Tile : MonoBehaviour
 
         tile = this.transform.gameObject;
 
-        boxCol = tile.AddComponent<BoxCollider2D>();
-        sprRen = tile.AddComponent<SpriteRenderer>();
-
         empty = Resources.Load<Sprite>("Sprites/emptyTile");
         open = Resources.Load<Sprite>("Sprites/openTile");
         locked = Resources.Load<Sprite>("Sprites/lockedTile");
         wall = Resources.Load<Sprite>("Sprites/wall");
         target = Resources.Load<Sprite>("Sprites/target");
         path = Resources.Load<Sprite>("Sprites/pathTile");
-
-        tileTypeSwitch = 1;
     }
 
     private void Update()
@@ -66,6 +61,7 @@ public class Tile : MonoBehaviour
         TileSwitch(tileTypeSwitch);
         if (grid != null)
         {
+            Debug.Log("grid not null " + tile.name);
             node = grid.NodeFromWorldPoint(tile.transform.position);
         }
 
