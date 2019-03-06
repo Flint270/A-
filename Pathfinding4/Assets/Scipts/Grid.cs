@@ -124,17 +124,20 @@ public class Grid : MonoBehaviour
 
                 bool walkable = !(Physics2D.OverlapCircle(worldPoint, nodeRadius, unwalkableMask));
 
+                
+                    tiles[x, y] = new GameObject();
+                    Tile tile = tiles[x, y].AddComponent<Tile>();
+                    
+                    tiles[x, y].GetComponent<Tile>().grid = this;
+                    
+                    tiles[x, y].transform.position = worldPoint;
+                    tiles[x, y].transform.SetParent(Tiles.transform);
+                
+                tiles[x, y].name = "Tile: " + x + ", " + y;
+
                 grid[x, y] = new Node(walkable, worldPoint, x, y);
 
-                tiles[x, y] = new GameObject();
-                Tile tile = tiles[x, y].AddComponent<Tile>();
-
-                tiles[x, y].GetComponent<Tile>().grid = this;
-
-                tiles[x, y].transform.SetParent(Tiles.transform);
-                tiles[x, y].name = "Tile: " + x + ", " + y;
-                tiles[x, y].transform.position = worldPoint;
-
+                #region tileText
                 /*GameObject gText = new GameObject();
                 gText.transform.SetParent(tiles[x, y].transform);
                 GameObject hText = new GameObject();
@@ -169,6 +172,7 @@ public class Grid : MonoBehaviour
                 fText.transform.localPosition = new Vector3(0.04f, -0.2f);
                 textF.fontSize = 3;
                 textF.color = Color.black;*/
+                #endregion
             }
         }
     }

@@ -7,7 +7,7 @@ public class Tile : MonoBehaviour
 {
     public enum tileType { Empty, Open, Locked, Wall, Target, Path};
 
-    Sprite empty;
+    public Sprite empty;
     Sprite open;
     Sprite locked;
     Sprite wall;
@@ -37,6 +37,11 @@ public class Tile : MonoBehaviour
 
     public GameObject tile;
 
+    private void Awake()
+    {
+        //AddTile();
+    }
+
     private void Start()
     {
         thisTile = this;
@@ -59,7 +64,10 @@ public class Tile : MonoBehaviour
     private void Update()
     {
         TileSwitch(tileTypeSwitch);
-        node = grid.NodeFromWorldPoint(tile.transform.position);
+        if (grid != null)
+        {
+            node = grid.NodeFromWorldPoint(tile.transform.position);
+        }
 
         gCost = node.gCost;
         hCost = node.hCost;
@@ -102,5 +110,37 @@ public class Tile : MonoBehaviour
                 sprRen.sprite = path;
                 break;
         }
+    }
+
+    public void AddTile()
+    {
+        thisTile = this;
+
+        tile = this.transform.gameObject;
+
+        if (boxCol != null)
+        {
+            boxCol = tile.GetComponent<BoxCollider2D>();
+        }
+        else
+        {
+            boxCol = tile.AddComponent<BoxCollider2D>();
+        }
+
+        if (sprRen != null)
+        {
+            sprRen = tile.GetComponent<SpriteRenderer>();
+        }
+        else
+        {
+            sprRen = tile.AddComponent<SpriteRenderer>();
+        }
+
+        empty = Resources.Load<Sprite>("Sprites/emptyTile");
+        open = Resources.Load<Sprite>("Sprites/openTile");
+        locked = Resources.Load<Sprite>("Sprites/lockedTile");
+        wall = Resources.Load<Sprite>("Sprites/wall");
+        target = Resources.Load<Sprite>("Sprites/target");
+        path = Resources.Load<Sprite>("Sprites/pathTile");
     }
 }

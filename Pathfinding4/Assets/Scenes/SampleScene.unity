@@ -526,8 +526,8 @@ MonoBehaviour:
   targetStart: 1
   gridSizeX: 0
   gridSizeY: 0
-  mapSizeX: 50
-  mapSizeY: 50
+  mapSizeX: 10
+  mapSizeY: 10
 --- !u!4 &1455690653
 Transform:
   m_ObjectHideFlags: 0
@@ -554,8 +554,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 712737fec2b336349b5ece688d525e1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  randMax: 75
-  Enum: 0
+  randMax: 65
+  Enum: 1
   player: {fileID: 562267241}
 --- !u!114 &1455690655
 MonoBehaviour:
@@ -571,4 +571,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   seeker: {fileID: 562267245}
   target: {fileID: 287921491}
-  timer: 1
+  timer: 0

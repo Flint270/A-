@@ -43,7 +43,14 @@ public class CameraController : MonoBehaviour
         cam.orthographicSize -= scroll * scrollSpeed * 100f * Time.deltaTime;
 
         cam.orthographicSize = Mathf.Clamp(cam.orthographicSize, 5, 20);
-
+        if(panLimit.x < 8.5f)
+        {
+            panLimit.x = 8.5f;
+        }
+        if (panLimit.y < 4.5f)
+        {
+            panLimit.y = 4.5f;
+        }
         pos.x = Mathf.Clamp(pos.x, 8.5f, panLimit.x);
         pos.y = Mathf.Clamp(pos.y, 4.5f, panLimit.y);
 
