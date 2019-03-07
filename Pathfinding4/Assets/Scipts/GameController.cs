@@ -12,6 +12,12 @@ public class GameController : MonoBehaviour
     public int randMax = 75;
 
     public bool Enum;
+    public bool loop;
+    bool pathFound;
+    public bool pathing;
+
+    [Range(1,6)]
+    public int loopTimer;
 
     public GameObject player;
 
@@ -23,11 +29,31 @@ public class GameController : MonoBehaviour
     {
         grid = GetComponent<Grid>();
         pathfinder = GetComponent<Pathfinding>();
+        loop = false;
+        pathFound = false;
+        pathing = false;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            loop = !loop;
+            pathing = false;
+            if (loop == true)
+            {
+                //Debug.Log("loop set true");
+                StartCoroutine(Loop());
+            }
+            else if (loop == false)
+            {
+                StopAllCoroutines();
+            }
+        }
+
+        
+
         if (Input.GetMouseButtonDown(1))
         {
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -74,7 +100,8 @@ public class GameController : MonoBehaviour
 
         else if (Input.GetKeyDown(KeyCode.Q))
         {
-            pathfinder.StopAllCoroutines();
+            pathing = false;
+            //pathfinder.StopAllCoroutines();
             grid.Clear();
             if(Enum == true)
             {
@@ -87,12 +114,14 @@ public class GameController : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.C))
         {
+            pathing = false;
             pathfinder.StopAllCoroutines();
             grid.Clear();
         }
         else if(Input.GetKeyDown(KeyCode.R))
         {
 
+            pathing = false;
             foreach (GameObject tileGo in grid.tiles)
             {
                 int r = Random.Range(1, 101);
@@ -148,5 +177,32 @@ public class GameController : MonoBehaviour
             }
         }
         #endregion
+    }
+
+    IEnumerator Loop()
+    {
+        while (loop == true)
+        {
+            if(pathing == false)
+            {
+                grid.Clear();
+                pathing = true;
+                if (Enum == true)
+                {
+                    pathfinder.PathFindLoop(pathfinder.seeker.position, pathfinder.target.position, () =>
+                    {
+                        pathing = false;
+                    });
+                }
+                else
+                {
+                    pathfinder.FindPathLoop(pathfinder.seeker.position, pathfinder.target.position, () =>
+                    {
+                        pathing = false;
+                    });
+                }
+            }
+            yield return new WaitForSeconds(loopTimer);
+        }
     }
 }

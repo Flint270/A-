@@ -16,8 +16,10 @@ public class Grid : MonoBehaviour
     List<Node> oldNeighbors;
 
     CameraController camCon;
-    
+
+    [HideInInspector]
     public bool playerStart = true;
+    [HideInInspector]
     public bool targetStart = true;
 
     //public GameObject prefab;
@@ -30,6 +32,7 @@ public class Grid : MonoBehaviour
     public List<Node> path;
 
     float nodeDiameter;
+    [HideInInspector]
     public int gridSizeX, gridSizeY;
 
     //[Range(17, 30)]

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -31,6 +32,11 @@ public class Pathfinding : MonoBehaviour
     public void PathFind(Vector3 startPos, Vector3 targetPos)
     {
         StartCoroutine(FindPathSlow(startPos, targetPos));
+    }
+
+    public void PathFindLoop(Vector3 startPos, Vector3 targetPos, Action pathFound = null)
+    {
+        StartCoroutine(FindPathSlowLoop(startPos, targetPos, pathFound));
     }
 
     void FindPath2(Vector3 startPos, Vector3 targetPos)
@@ -167,6 +173,64 @@ public class Pathfinding : MonoBehaviour
         }
     }
 
+    public IEnumerator FindPathSlowLoop(Vector3 startPos, Vector3 targetPos, Action pathFound)
+    {
+        Node startNode = grid.NodeFromWorldPoint(startPos);
+        Node targetNode = grid.NodeFromWorldPoint(targetPos);
+
+        List<Node> openSet = new List<Node>();
+        HashSet<Node> closedSet = new HashSet<Node>();
+
+        openSet.Add(startNode);
+
+        while (openSet.Count > 0)
+        {
+            Node currentNode = openSet[0];
+            for (int i = 1; i < openSet.Count; i++)
+            {
+                if (openSet[i].fCost < currentNode.fCost || openSet[i].fCost == currentNode.fCost && openSet[i].hCost < currentNode.hCost)
+                {
+                    currentNode = openSet[i];
+                }
+            }
+
+            openSet.Remove(currentNode);
+            closedSet.Add(currentNode);
+            GameObject tileGo = grid.TileFromWorldPoint(currentNode.worldPosition);
+            Tile tile = tileGo.GetComponent<Tile>();
+            tile.tileTypeSwitch = 3;
+
+            if (currentNode == targetNode)
+            {
+                RetracePath(startNode, targetNode);
+                pathFound();
+                StopAllCoroutines();
+            }
+
+            foreach (Node neighbor in grid.GetNeighbor(currentNode))
+            {
+                if (!neighbor.walkable || closedSet.Contains(neighbor))
+                {
+                    continue;
+                }
+
+                int newMovementCostToNeighbor = currentNode.gCost + GetDistance(currentNode, neighbor);
+                if (newMovementCostToNeighbor < neighbor.gCost || !openSet.Contains(neighbor))
+                {
+                    neighbor.gCost = newMovementCostToNeighbor;
+                    neighbor.hCost = GetDistance(neighbor, targetNode);
+                    neighbor.parent = currentNode;
+
+                    if (!openSet.Contains(neighbor))
+                    {
+                        openSet.Add(neighbor);
+                    }
+                }
+            }
+            yield return new WaitForSeconds(timer);
+        }
+    }
+
     public void FindPath(Vector3 startPos, Vector3 targetPos)
     {
         Node startNode = grid.NodeFromWorldPoint(startPos);
@@ -215,6 +279,63 @@ public class Pathfinding : MonoBehaviour
                     neighbor.parent = currentNode;
 
                     if(!openSet.Contains(neighbor))
+                    {
+                        openSet.Add(neighbor);
+                    }
+                }
+            }
+        }
+    }
+
+    public void FindPathLoop(Vector3 startPos, Vector3 targetPos, Action pathFound)
+    {
+        Node startNode = grid.NodeFromWorldPoint(startPos);
+        Node targetNode = grid.NodeFromWorldPoint(targetPos);
+
+        List<Node> openSet = new List<Node>();
+        HashSet<Node> closedSet = new HashSet<Node>();
+
+        openSet.Add(startNode);
+
+        while (openSet.Count > 0)
+        {
+            Node currentNode = openSet[0];
+            for (int i = 1; i < openSet.Count; i++)
+            {
+                if (openSet[i].fCost < currentNode.fCost || openSet[i].fCost == currentNode.fCost && openSet[i].hCost < currentNode.hCost)
+                {
+                    currentNode = openSet[i];
+                }
+            }
+
+            openSet.Remove(currentNode);
+            closedSet.Add(currentNode);
+            GameObject tileGo = grid.TileFromWorldPoint(currentNode.worldPosition);
+            Tile tile = tileGo.GetComponent<Tile>();
+            tile.tileTypeSwitch = 3;
+
+            if (currentNode == targetNode)
+            {
+                RetracePath(startNode, targetNode);
+                pathFound();
+                return;
+            }
+
+            foreach (Node neighbor in grid.GetNeighbor(currentNode))
+            {
+                if (!neighbor.walkable || closedSet.Contains(neighbor))
+                {
+                    continue;
+                }
+
+                int newMovementCostToNeighbor = currentNode.gCost + GetDistance(currentNode, neighbor);
+                if (newMovementCostToNeighbor < neighbor.gCost || !openSet.Contains(neighbor))
+                {
+                    neighbor.gCost = newMovementCostToNeighbor;
+                    neighbor.hCost = GetDistance(neighbor, targetNode);
+                    neighbor.parent = currentNode;
+
+                    if (!openSet.Contains(neighbor))
                     {
                         openSet.Add(neighbor);
                     }

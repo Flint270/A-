@@ -61,7 +61,7 @@ public class Tile : MonoBehaviour
         TileSwitch(tileTypeSwitch);
         if (grid != null)
         {
-            Debug.Log("grid not null " + tile.name);
+            //Debug.Log("grid not null " + tile.name);
             node = grid.NodeFromWorldPoint(tile.transform.position);
         }
 
