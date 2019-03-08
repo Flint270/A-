@@ -5,7 +5,7 @@ using TMPro;
 
 public class Tile : MonoBehaviour
 {
-    public enum tileType { Empty, Open, Locked, Wall, Target, Path};
+    public enum tileType { Empty, Open, Locked, Wall, Target, Path, Teleporter};
 
     public Sprite empty;
     Sprite open;
@@ -13,11 +13,14 @@ public class Tile : MonoBehaviour
     Sprite wall;
     Sprite target;
     Sprite path;
+    Sprite teleporter;
 
     public tileType type;
     public SpriteRenderer sprRen;
     public BoxCollider2D boxCol;
     public int tileTypeSwitch;
+
+    public int teleCode;
 
     public Grid grid;
     Node node;
@@ -37,11 +40,6 @@ public class Tile : MonoBehaviour
 
     public GameObject tile;
 
-    private void Awake()
-    {
-        //AddTile();
-    }
-
     private void Start()
     {
         thisTile = this;
@@ -54,6 +52,7 @@ public class Tile : MonoBehaviour
         wall = Resources.Load<Sprite>("Sprites/wall");
         target = Resources.Load<Sprite>("Sprites/target");
         path = Resources.Load<Sprite>("Sprites/pathTile");
+        teleporter = Resources.Load<Sprite>("Sprites/teleTile");
     }
 
     private void Update()
@@ -61,7 +60,6 @@ public class Tile : MonoBehaviour
         TileSwitch(tileTypeSwitch);
         if (grid != null)
         {
-            //Debug.Log("grid not null " + tile.name);
             node = grid.NodeFromWorldPoint(tile.transform.position);
         }
 
@@ -104,6 +102,10 @@ public class Tile : MonoBehaviour
             case 6:
                 type = tileType.Path;
                 sprRen.sprite = path;
+                break;
+            case 7:
+                type = tileType.Teleporter;
+                sprRen.sprite = teleporter;
                 break;
         }
     }

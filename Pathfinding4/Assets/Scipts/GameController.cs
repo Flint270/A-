@@ -95,8 +95,48 @@ public class GameController : MonoBehaviour
             }
         }
 
-        
+        else if(Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
 
+            RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
+            if (hit.collider != null)
+            {
+                Tile tileHit = hit.transform.gameObject.GetComponent<Tile>();
+                Node node = grid.NodeFromWorldPoint(hit.transform.position);
+
+                if (tileHit.tileTypeSwitch == 1)
+                {
+                    tileHit.tileTypeSwitch = 7;
+                    tileHit.teleCode = 1;
+                }
+                else if(tileHit.tileTypeSwitch == 7)
+                {
+                    tileHit.tileTypeSwitch = 1;
+                    tileHit.teleCode = 0;
+                }
+            }
+        }
+
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
+
+            RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
+            if (hit.collider != null)
+            {
+                Tile tileHit = hit.transform.gameObject.GetComponent<Tile>();
+                Node node = grid.NodeFromWorldPoint(hit.transform.position);
+
+                if (tileHit.tileTypeSwitch == 1)
+                {
+                    tileHit.tileTypeSwitch = 7;
+                    tileHit.teleCode = 2;
+                }
+            }
+        }
 
         else if (Input.GetKeyDown(KeyCode.Q))
         {

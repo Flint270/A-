@@ -39,7 +39,7 @@ public class Pathfinding : MonoBehaviour
         StartCoroutine(FindPathSlowLoop(startPos, targetPos, pathFound));
     }
 
-    void FindPath2(Vector3 startPos, Vector3 targetPos)
+    /*void FindPath2(Vector3 startPos, Vector3 targetPos)
     {
         Node startNode = grid.NodeFromWorldPoint(startPos);
         Node targetNode = grid.NodeFromWorldPoint(targetPos);
@@ -86,10 +86,13 @@ public class Pathfinding : MonoBehaviour
                 }
             }
         }
-    }
+    }*/
 
     public void SetNeighbor(Node currentNode, Node targetNode)
     {
+        GameObject tileGo = grid.TileFromWorldPoint(currentNode.worldPosition);
+        Tile tile = tileGo.GetComponent <Tile>();
+
         foreach (Node neighbor in grid.GetNeighbor(currentNode))
         {
             if (!neighbor.walkable || closedSet.Contains(neighbor))
@@ -97,7 +100,18 @@ public class Pathfinding : MonoBehaviour
                 continue;
             }
 
-            int newMovementCostToNeighbor = currentNode.gCost + GetDistance(currentNode, neighbor);
+            GameObject _tileGo = grid.TileFromWorldPoint(neighbor.worldPosition);
+            Tile _tile = _tileGo.GetComponent<Tile>();
+            int newMovementCostToNeighbor = 0;
+
+            if (_tile.tileTypeSwitch == 7)
+            {
+                newMovementCostToNeighbor = currentNode.gCost;
+            }
+            else
+            {
+                newMovementCostToNeighbor = currentNode.gCost + GetDistance(currentNode, neighbor);
+            }
 
             if (newMovementCostToNeighbor < neighbor.gCost || neighbor.gCost == 0 || !openSet.Contains(neighbor))
             {
@@ -141,7 +155,10 @@ public class Pathfinding : MonoBehaviour
             closedSet.Add(currentNode);
             GameObject tileGo = grid.TileFromWorldPoint(currentNode.worldPosition);
             Tile tile = tileGo.GetComponent<Tile>();
-            tile.tileTypeSwitch = 3;
+            if (tile.tileTypeSwitch != 7)
+            {
+                tile.tileTypeSwitch = 3;
+            }
 
             if (currentNode == targetNode)
             {
@@ -155,9 +172,20 @@ public class Pathfinding : MonoBehaviour
                 {
                     continue;
                 }
+                GameObject _tileGo = grid.TileFromWorldPoint(neighbor.worldPosition);
+                Tile _tile = _tileGo.GetComponent<Tile>();
+                int newMovementCostToNeighbor = 0;
 
-                int newMovementCostToNeighbor = currentNode.gCost + GetDistance(currentNode, neighbor);
-                if(newMovementCostToNeighbor < neighbor.gCost || !openSet.Contains(neighbor))
+                if (_tile.tileTypeSwitch == 7)
+                {
+                    newMovementCostToNeighbor = currentNode.gCost;
+                }
+                else
+                {
+                    newMovementCostToNeighbor = currentNode.gCost + GetDistance(currentNode, neighbor);
+                }
+
+                if (newMovementCostToNeighbor < neighbor.gCost || !openSet.Contains(neighbor))
                 {
                     neighbor.gCost = newMovementCostToNeighbor;
                     neighbor.hCost = GetDistance(neighbor, targetNode);
@@ -198,7 +226,10 @@ public class Pathfinding : MonoBehaviour
             closedSet.Add(currentNode);
             GameObject tileGo = grid.TileFromWorldPoint(currentNode.worldPosition);
             Tile tile = tileGo.GetComponent<Tile>();
-            tile.tileTypeSwitch = 3;
+            if (tile.tileTypeSwitch != 7)
+            {
+                tile.tileTypeSwitch = 3;
+            }
 
             if (currentNode == targetNode)
             {
@@ -213,8 +244,21 @@ public class Pathfinding : MonoBehaviour
                 {
                     continue;
                 }
+                GameObject _tileGo = grid.TileFromWorldPoint(neighbor.worldPosition);
+                Tile _tile = _tileGo.GetComponent<Tile>();
+                int newMovementCostToNeighbor = 0;
 
-                int newMovementCostToNeighbor = currentNode.gCost + GetDistance(currentNode, neighbor);
+                if (_tile.tileTypeSwitch == 7)
+                {
+                    newMovementCostToNeighbor = currentNode.gCost;
+                }
+
+                else
+                {
+                    newMovementCostToNeighbor = currentNode.gCost + GetDistance(currentNode, neighbor);
+                }
+
+
                 if (newMovementCostToNeighbor < neighbor.gCost || !openSet.Contains(neighbor))
                 {
                     neighbor.gCost = newMovementCostToNeighbor;
@@ -256,7 +300,10 @@ public class Pathfinding : MonoBehaviour
             closedSet.Add(currentNode);
             GameObject tileGo = grid.TileFromWorldPoint(currentNode.worldPosition);
             Tile tile = tileGo.GetComponent<Tile>();
-            tile.tileTypeSwitch = 3;
+            if (tile.tileTypeSwitch != 7)
+            {
+                tile.tileTypeSwitch = 3;
+            }
 
             if (currentNode == targetNode)
             {
@@ -270,9 +317,20 @@ public class Pathfinding : MonoBehaviour
                 {
                     continue;
                 }
+                GameObject _tileGo = grid.TileFromWorldPoint(neighbor.worldPosition);
+                Tile _tile = _tileGo.GetComponent<Tile>();
+                int newMovementCostToNeighbor = 0;
 
-                int newMovementCostToNeighbor = currentNode.gCost + GetDistance(currentNode, neighbor);
-                if(newMovementCostToNeighbor < neighbor.gCost || !openSet.Contains(neighbor))
+                if (_tile.tileTypeSwitch == 7)
+                {
+                    newMovementCostToNeighbor = currentNode.gCost;
+                }
+
+                else
+                {
+                    newMovementCostToNeighbor = currentNode.gCost + GetDistance(currentNode, neighbor);
+                }
+                if (newMovementCostToNeighbor < neighbor.gCost || !openSet.Contains(neighbor))
                 {
                     neighbor.gCost = newMovementCostToNeighbor;
                     neighbor.hCost = GetDistance(neighbor, targetNode);
@@ -312,7 +370,10 @@ public class Pathfinding : MonoBehaviour
             closedSet.Add(currentNode);
             GameObject tileGo = grid.TileFromWorldPoint(currentNode.worldPosition);
             Tile tile = tileGo.GetComponent<Tile>();
-            tile.tileTypeSwitch = 3;
+            if (tile.tileTypeSwitch != 7)
+            {
+                tile.tileTypeSwitch = 3;
+            }
 
             if (currentNode == targetNode)
             {
@@ -327,8 +388,19 @@ public class Pathfinding : MonoBehaviour
                 {
                     continue;
                 }
+                GameObject _tileGo = grid.TileFromWorldPoint(neighbor.worldPosition);
+                Tile _tile = _tileGo.GetComponent<Tile>();
+                int newMovementCostToNeighbor = 0;
 
-                int newMovementCostToNeighbor = currentNode.gCost + GetDistance(currentNode, neighbor);
+                if (_tile.tileTypeSwitch == 7)
+                {
+                    newMovementCostToNeighbor = currentNode.gCost;
+                }
+
+                else
+                {
+                    newMovementCostToNeighbor = currentNode.gCost + GetDistance(currentNode, neighbor);
+                }
                 if (newMovementCostToNeighbor < neighbor.gCost || !openSet.Contains(neighbor))
                 {
                     neighbor.gCost = newMovementCostToNeighbor;
@@ -354,7 +426,10 @@ public class Pathfinding : MonoBehaviour
         {
             GameObject tileGo = grid.TileFromWorldPoint(currentNode.worldPosition);
             Tile tile = tileGo.GetComponent<Tile>();
-            tile.tileTypeSwitch = 6;
+            if (tile.tileTypeSwitch != 7)
+            {
+                tile.tileTypeSwitch = 6;
+            }
             path.Add(currentNode);
             currentNode = currentNode.parent;
         }

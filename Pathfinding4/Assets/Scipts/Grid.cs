@@ -157,9 +157,10 @@ public class Grid : MonoBehaviour
                 tiles[x, y].transform.SetParent(Tiles.transform);
                 tiles[x, y].name = "Tile: " + x + ", " + y;
 
+                Tile _tile = tiles[x, y].GetComponent<Tile>();
 
                 #region tileText
-                /*GameObject gText = new GameObject();
+                GameObject gText = new GameObject();
                 gText.transform.SetParent(tiles[x, y].transform);
                 GameObject hText = new GameObject();
                 hText.transform.SetParent(tiles[x, y].transform);
@@ -171,28 +172,31 @@ public class Grid : MonoBehaviour
                 TextMeshPro textF = fText.AddComponent<TextMeshPro>();
 
                 gText.name = "Gtext";
-                tile.gText = textG;
+                _tile.gText = textG;
                 textG.alignment = TextAlignmentOptions.Center;
                 gText.GetComponent<RectTransform>().sizeDelta = new Vector2(0.9f, 0.6f);
                 gText.transform.localPosition = new Vector3(-0.20f, 0.25f);
                 textG.fontSize = 2;
                 textG.color = Color.black;
+                textG.transform.position = new Vector3(textG.transform.position.x, textG.transform.position.y, -0.3f);
 
                 hText.name = "Htext";
-                tile.hText = textH;
+                _tile.hText = textH;
                 textH.alignment = TextAlignmentOptions.Center;
                 hText.GetComponent<RectTransform>().sizeDelta = new Vector2(0.9f, 0.6f);
                 hText.transform.localPosition = new Vector3(0.25f, 0.25f);
                 textH.fontSize = 2;
                 textH.color = Color.black;
+                textH.transform.position = new Vector3(textH.transform.position.x, textH.transform.position.y, -0.3f);
 
                 fText.name = "Ftext";
-                tile.fText = textF;
+                _tile.fText = textF;
                 textF.alignment = TextAlignmentOptions.Center;
                 fText.GetComponent<RectTransform>().sizeDelta = new Vector2(0.9f, 0.6f);
                 fText.transform.localPosition = new Vector3(0.04f, -0.2f);
                 textF.fontSize = 3;
-                textF.color = Color.black;*/
+                textF.color = Color.black;
+                textF.transform.position = new Vector3(textF.transform.position.x, textF.transform.position.y, -0.3f);
                 #endregion
             }
         }
@@ -221,8 +225,39 @@ public class Grid : MonoBehaviour
                     if (!neighbors.Contains(grid[checkX, checkY]) && thisTile.tileTypeSwitch != 3 && thisTile.tileTypeSwitch != 4  && thisTile.tileTypeSwitch != 6)
                     {
                         neighbors.Add(grid[checkX, checkY]);
-                        thisTile.tileTypeSwitch = 2;
 
+                        #region TeleporterTiles
+                        if (thisTile.tileTypeSwitch == 7)
+                        {
+                            foreach (Node n in grid)
+                            {
+                                GameObject tileGo = TileFromWorldPoint(n.worldPosition);
+                                Tile tileCom = tileGo.GetComponent<Tile>();
+
+                                if (n != node)
+                                {
+                                    if (tileCom.tileTypeSwitch == 7 && tileCom.teleCode == thisTile.teleCode)
+                                    {
+                                        if (!neighbors.Contains(grid[(int)tileGo.transform.position.x, (int)tileGo.transform.position.y]))
+                                        {
+                                            neighbors.Add(grid[(int)tileGo.transform.position.x, (int)tileGo.transform.position.y]);
+
+                                            if (pathfinder.openSet != null && !pathfinder.openSet.Contains(grid[(int)tileGo.transform.position.x, (int)tileGo.transform.position.y]))
+                                            {
+                                                pathfinder.openSet.Add(grid[(int)tileGo.transform.position.x, (int)tileGo.transform.position.y]);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        #endregion
+
+
+                        if (thisTile.tileTypeSwitch != 7)
+                        {
+                            thisTile.tileTypeSwitch = 2;
+                        }
                         if (pathfinder.openSet != null && !pathfinder.openSet.Contains(grid[checkX, checkY]))
                         {
                             pathfinder.openSet.Add(grid[checkX, checkY]);
@@ -311,6 +346,7 @@ public class Grid : MonoBehaviour
         return tiles[x, y];
     }
 
+    /*
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireCube(transform.position, gridWorldSize);
@@ -341,5 +377,5 @@ public class Grid : MonoBehaviour
 
             }
         }
-    }
+    }*/
 }
