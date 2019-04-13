@@ -355,6 +355,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sensitivity: 1
   smoothing: 5
+  pInput: {fileID: 939910145}
 --- !u!1 &832043505
 GameObject:
   m_ObjectHideFlags: 0
@@ -564,6 +565,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 10
+  isPaused: 0
 --- !u!1 &1165503391
 GameObject:
   m_ObjectHideFlags: 0

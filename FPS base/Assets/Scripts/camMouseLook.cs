@@ -10,6 +10,8 @@ public class camMouseLook : MonoBehaviour
     public float smoothing = 2.0f;
 
     GameObject character;
+    [SerializeField]
+    PlayerInput pInput;
     
     void Start()
     {
@@ -18,17 +20,21 @@ public class camMouseLook : MonoBehaviour
     
     void Update()
     {
-        var md = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
+        if (pInput.isPaused == false)
+        {
 
-        md = Vector2.Scale(md, new Vector2(sensitivity * smoothing, sensitivity * smoothing));
-        smoothV.x = Mathf.Lerp(smoothV.x, md.x, 1f / smoothing);
-        smoothV.y = Mathf.Lerp(smoothV.y, md.y, 1f / smoothing);
+            var md = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
 
-        mouseLook += smoothV;
+            md = Vector2.Scale(md, new Vector2(sensitivity * smoothing, sensitivity * smoothing));
+            smoothV.x = Mathf.Lerp(smoothV.x, md.x, 1f / smoothing);
+            smoothV.y = Mathf.Lerp(smoothV.y, md.y, 1f / smoothing);
 
-        mouseLook.y = Mathf.Clamp(mouseLook.y, -70, 80);
+            mouseLook += smoothV;
 
-        transform.localRotation = Quaternion.AngleAxis(-mouseLook.y, Vector3.right);
-        character.transform.localRotation = Quaternion.AngleAxis(mouseLook.x, character.transform.up);
+            mouseLook.y = Mathf.Clamp(mouseLook.y, -70, 80);
+
+            transform.localRotation = Quaternion.AngleAxis(-mouseLook.y, Vector3.right);
+            character.transform.localRotation = Quaternion.AngleAxis(mouseLook.x, character.transform.up);
+        }
     }
 }

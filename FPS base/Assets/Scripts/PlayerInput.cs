@@ -7,6 +7,7 @@ public class PlayerInput : MonoBehaviour
 {
     public float speed = 10.0f;
 
+    public bool isPaused;
     PlayerMovement movement;
 
 
@@ -15,18 +16,32 @@ public class PlayerInput : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         movement = GetComponent<PlayerMovement>();
+        isPaused = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        movement.translation = Input.GetAxis("Vertical") * speed;
-        movement.straffe = Input.GetAxis("Horizontal") * speed;
-        
-
-        if(Input.GetKeyDown("escape"))
+        if (Input.GetKeyDown("f1"))
         {
-            Cursor.lockState = CursorLockMode.None;
+            isPaused = !isPaused;
+            if (isPaused == true)
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
+            else if (isPaused == false)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
+        }
+
+        if (isPaused == false)
+        {
+            movement.translation = Input.GetAxis("Vertical") * speed;
+            movement.straffe = Input.GetAxis("Horizontal") * speed;
+            
         }
     }
 }
